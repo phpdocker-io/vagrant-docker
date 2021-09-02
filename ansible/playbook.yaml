@@ -10,12 +10,13 @@
         update_cache: true
         upgrade: dist
 
-    - name: Install docker & docker-compose
+    - name: Install docker, docker-compose and other tools
       become: true
       apt:
         pkg:
           - docker.io
           - docker-compose
+          - make
 
     - name: Allow default user access to docker
       become: true
