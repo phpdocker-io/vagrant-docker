@@ -1,8 +1,13 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'yaml'
+
+services_file = 'services.yaml'
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
+  config.vm.box_version = "20210415.0.0"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -35,10 +40,6 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
     vb.gui = false
@@ -46,10 +47,6 @@ Vagrant.configure("2") do |config|
     # Customize the amount of memory on the VM:
     vb.memory = "4096"
   end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
-
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
@@ -60,5 +57,19 @@ Vagrant.configure("2") do |config|
   # SHELL
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ansible/playbook.yaml"
+  end
+
+  if File.exists?(services_file)
+    services = YAML.load_file(services_file)
+
+    services['services'].each do |service|
+      print "Bringing service up"
+      if services['enabled'] == true
+#         config.vm.provision "shell", run: "always" do |s|
+#           s.inline = "cd $1; $2"
+#           s.args = [service['folder'], service['startup_command']]
+#         end
+      end
+    end
   end
 end
