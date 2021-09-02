@@ -5,11 +5,13 @@
   tasks:
 
     - name: Upgrade system
+      become: true
       apt:
         update_cache: true
         upgrade: dist
 
     - name: Install docker
+      become: true
       apt:
         pkg:
           - docker.io
