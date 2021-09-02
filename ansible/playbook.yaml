@@ -10,11 +10,16 @@
         update_cache: true
         upgrade: dist
 
-    - name: Install docker
+    - name: Install docker & docker-compose
       become: true
       apt:
         pkg:
           - docker.io
           - docker-compose
 
-
+    - name: Allow default user access to docker
+      become: true
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
