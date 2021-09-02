@@ -1,0 +1,6 @@
+services:
+  - name: symfony-test
+    git_repo: ~
+    folder: symfony-test
+    startup_command: docker-compose up -d
+    enabled: true
