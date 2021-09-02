@@ -1,0 +1,18 @@
+---
+
+- name: System setup
+  hosts: all
+  tasks:
+
+    - name: Upgrade system
+      apt:
+        update_cache: true
+        upgrade: dist
+
+    - name: Install docker
+      apt:
+        pkg:
+          - docker.io
+          - docker-compose
+
+
