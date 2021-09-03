@@ -1,10 +1,5 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
-unless Vagrant.has_plugin?("vagrant-vbguest")
-  raise 'Please install vagrant-vbguest: `vagrant plugin install vagrant-vbguest`'
-end
-
 require 'yaml'
 
 services_file = 'services.yaml'
@@ -12,9 +7,9 @@ services_file = 'services.yaml'
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
 
-#   # Temporary workaround - looks like newer versions of this box have an issue with the vboxsf filesystem
-#   config.vm.box_version = "20210415.0.0"
-#   config.vm.box_check_update = false
+  # Workaround for https://bugs.launchpad.net/bugs/1873506
+  config.vm.box_version = "20210415.0.0"
+  config.vm.box_check_update = false
 
   # Create a private network on your host that's accessible from the guest - this is useful if you need connections
   # back to your host from your guest
@@ -27,6 +22,7 @@ Vagrant.configure("2") do |config|
   # VM configuration
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
+    vb.cpus = 1
     vb.memory = "4096"
   end
 

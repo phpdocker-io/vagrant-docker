@@ -9,12 +9,25 @@
         update_cache: true
         upgrade: dist
 
-    - name: Install docker, docker-compose and other tools
+    # Workaround for https://bugs.launchpad.net/bugs/1873506
+    # Must use vagrant box version 20210415.0.0 or earlier for this to work
+    - name: Install virtualbox-guest-dkms
+      become: true
+      apt:
+        pkg:
+          - virtualbox-guest-dkms
+
+    - name: Install docker
       become: true
       apt:
         pkg:
           - docker.io
           - docker-compose
+
+    - name: Install tooling
+      become: true
+      apt:
+        pkg:
           - make
           - supervisor
 
