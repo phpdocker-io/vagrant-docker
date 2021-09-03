@@ -3,8 +3,6 @@
 - name: System setup
   hosts: all
   tasks:
-
-
     - name: Upgrade system
       become: true
       apt:
