@@ -4,6 +4,7 @@
   hosts: all
   tasks:
 
+
     - name: Upgrade system
       become: true
       apt:
@@ -17,6 +18,7 @@
           - docker.io
           - docker-compose
           - make
+          - supervisor
 
     - name: Allow default user access to docker
       become: true
@@ -24,3 +26,28 @@
         name: vagrant
         groups: docker
         append: yes
+
+    - name: Load service definitions
+      include_vars:
+        file: ../services.yaml
+        name: services
+
+    - name: Create supervisor log folder
+      file:
+        path: /home/vagrant/logs
+        owner: vagrant
+        group: vagrant
+        state: directory
+
+    - name: Write supervisor config for services
+      become: true
+      template:
+        src: templates/supervisor_program.conf.j2
+        dest: /etc/supervisor/conf.d/{{ item.name }}.conf
+      with_items: "{{ services.definitions }}"
+
+    - name: Restart supervisor
+      become: true
+      systemd:
+        name: supervisor
+        state: reloaded
