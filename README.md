@@ -58,3 +58,17 @@ Then you can simply target that multistage on your docker-compose file:
       target: dev
       context: .
 ```
+
+## Why not assign more than 1 CPU?
+
+Virtualbox actually runs slower when you assign more than 1 CPU core to the box due to overheads on how it implements
+multi threading. This is a very old issue that who know if it'll ever get fixed.
+
+## Why Virtualbox only?
+
+Virtualbox is the only open source, multiplatform solution out there at the moment. That's basically it - they will
+never be supported by this project.
+
+You're free to fork and tweak to your heart's content though - this project is MIT licensed. You could re-wire this VM 
+to function in VMWARE instead, or the native hypervisor on your OS (eg windows Hyper V). Some of those hypervisors 
+don't have the performance penalties Virtualbox have. 
