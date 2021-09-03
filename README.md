@@ -86,14 +86,26 @@ TBD
 Your services are started via supervisor. Logs are piped to `/home/vagrant/logs/supervisor-SERVICE_NAME.log` 
 
 
-## Why not assign more than 1 CPU?
+## FAQ
+### Why not assign more than 1 CPU?
 Virtualbox actually runs slower when you assign more than 1 CPU core to the box due to overheads on how it implements
 multi threading. This is a very old issue and who knows if it'll ever get fixed.
 
-## Why Virtualbox only?
+### Why Virtualbox only?
 Virtualbox is the only open source, multiplatform solution out there at the moment. That's basically it - they will
 never be supported by this project.
 
 You're free to fork and tweak to your heart's content though - this project is MIT licensed. You could re-wire this VM 
 to function in VMWARE instead, or the native hypervisor on your OS (eg windows Hyper V). Some of those hypervisors 
 don't have the performance penalties Virtualbox have. 
+
+### The vagrant box has started, but the services aren't loading on my host
+
+Supervisor will run the `startup_command` once it starts up, but that does not mean your service is immediately
+available. Check the logs for that service in `/home/vagrant/logs` to see at what point of startup your service
+actually is. 
+
+It is common for a docker service to take a while to start if a docker build is necessary, especially after 
+re-creating the box from scratch as there will be no cached built containers. For instance, if your service uses
+the official php base image you'll probably be building a ton of dependencies from sources the first time you do
+docker-compose up on a pristine vm.
