@@ -1,6 +1,16 @@
-services:
+definitions:
   - name: symfony-test
     git_repo: ~
-    folder: symfony-test
-    startup_command: docker-compose up -d
+    directory: symfony-test
+    hostname: symfony-test
+    startup_command: docker-compose up
     enabled: true
+    autostart: true
+
+  - name: bolt-example
+    git_repo: ~
+    directory: bolt-example
+    hostname: bolt
+    startup_command: docker-compose up
+    enabled: true
+    autostart: true
