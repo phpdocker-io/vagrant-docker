@@ -18,7 +18,6 @@ This is still a work in progress.
  - Virtualbox
 
 ## Permission issues in containers
-
 **Scenario:** PHP symfony app has issues writing to the `var/` folder its logs or caches or
 whatever.
 
@@ -59,13 +58,39 @@ Then you can simply target that multistage on your docker-compose file:
       context: .
 ```
 
-## Why not assign more than 1 CPU?
+## Services
 
+### How services are run
+Each service defined in [services.yaml](services.yaml) is set up as a supervisor program service. You can have a 
+look at supervisor's template for each service to see where everything goes. See below for file structure.
+
+When you define the `startup_command` make sure the command does not terminate - this is similar to docker where
+you must make sure your program does not go into the background to continue execution. Supervisor (and docker) consider
+the process to have died when it exits.
+
+Examples for a docker-compose service
+```yaml
+definitions:
+    # Good - process won't exit and docker-compose prints logs to stdout, which supervisor collects
+    - startup_command: docker-compose up
+ 
+    # Bad - process goes into background. This really upsets supervisor as it things your process terminated
+    - startup_command: docker-compose up -d
+```
+
+
+### File structure
+TBD
+
+### Logs
+Your services are started via supervisor. Logs are piped to `/home/vagrant/logs/supervisor-SERVICE_NAME.log` 
+
+
+## Why not assign more than 1 CPU?
 Virtualbox actually runs slower when you assign more than 1 CPU core to the box due to overheads on how it implements
 multi threading. This is a very old issue and who knows if it'll ever get fixed.
 
 ## Why Virtualbox only?
-
 Virtualbox is the only open source, multiplatform solution out there at the moment. That's basically it - they will
 never be supported by this project.
 
