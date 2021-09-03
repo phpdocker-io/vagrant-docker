@@ -62,7 +62,7 @@ Then you can simply target that multistage on your docker-compose file:
 ## Why not assign more than 1 CPU?
 
 Virtualbox actually runs slower when you assign more than 1 CPU core to the box due to overheads on how it implements
-multi threading. This is a very old issue that who know if it'll ever get fixed.
+multi threading. This is a very old issue and who knows if it'll ever get fixed.
 
 ## Why Virtualbox only?
 
