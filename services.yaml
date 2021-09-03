@@ -6,6 +6,9 @@ definitions:
     startup_command: docker-compose up
     enabled: true
     autostart: true
+    port_mappings:
+      - guest: 43000
+        host: 12000
 
   - name: bolt-example
     git_repo: ~
@@ -14,3 +17,6 @@ definitions:
     startup_command: docker-compose up
     enabled: true
     autostart: true
+    port_mappings:
+      - guest: 8080
+        host: 12001
