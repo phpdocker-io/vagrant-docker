@@ -43,6 +43,16 @@
         file: ../services.yaml
         name: services
 
+    - name: Checkout apps
+      shell: |
+        cd /home/vagrant/projects
+        if [[ "{{ item.git_repo }}" != "" && ! -d "{{ item.directory }}" ]]; then
+          git clone {{ item.git_repo }} {{ item.directory }}
+        fi
+      args:
+        executable: /bin/bash
+      with_items: "{{ services.definitions }}"
+
     - name: Create supervisor log folder
       file:
         path: /home/vagrant/logs
