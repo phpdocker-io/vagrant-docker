@@ -71,4 +71,4 @@
       become: true
       systemd:
         name: supervisor
-        state: reloaded
+        state: restarted
