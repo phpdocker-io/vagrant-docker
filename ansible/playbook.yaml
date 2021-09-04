@@ -55,7 +55,7 @@
 
     - name: Create supervisor log folder
       file:
-        path: /home/vagrant/logs
+        path: /home/vagrant/projects/logs
         owner: vagrant
         group: vagrant
         state: directory
