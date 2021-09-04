@@ -23,7 +23,7 @@ definitions:
     git_repo: https://github.com/phpdocker-io/phpdocker.io.git
     directory: phpdockerio
     hostname: phpdocker
-    startup_command: make init start -e CAROOT=~/local_certificates
+    startup_command: make start -e CAROOT=~/local_certificates
     autostart: true
     port_mappings:
       - guest: 10000
