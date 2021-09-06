@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
           config.vm.network "forwarded_port", guest: ports['guest'], host: ports['host'], host_ip: "127.0.0.1"
         end
 
-        config.trigger.before [:provision] do |trigger|
+        config.trigger.after [:provision] do |trigger|
           trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['hostname'] }
         end
       end
