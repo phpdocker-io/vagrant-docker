@@ -1,3 +1,4 @@
 .vagrant
 projects/*
 services.yaml
+bin/*
