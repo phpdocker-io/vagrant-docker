@@ -1,2 +1,3 @@
 .vagrant
 projects/*
+services.yaml
