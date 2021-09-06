@@ -1,5 +1,6 @@
 definitions:
   - name: phpdocker
+    hostname: phpdocker-vagrant
     git_repo: https://github.com/phpdocker-io/phpdocker.io.git
     directory: phpdockerio
     startup_command: make start -e CAROOT=~/local_certificates
