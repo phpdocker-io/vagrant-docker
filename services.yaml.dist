@@ -1,0 +1,9 @@
+definitions:
+  - name: phpdocker
+    git_repo: https://github.com/phpdocker-io/phpdocker.io.git
+    directory: phpdockerio
+    startup_command: make start -e CAROOT=~/local_certificates
+    autostart: true
+    port_mappings:
+      - guest: 10000
+        host: 12002
