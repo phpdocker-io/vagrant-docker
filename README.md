@@ -60,11 +60,39 @@ Then you can simply target that multistage on your docker-compose file:
 
 ## Services
 
-### How services are run
-Each service defined in [services.yaml](services.yaml) is set up as a supervisor program service. You can have a 
-look at the [supervisor config template](ansible/templates/supervisor_program.conf.j2) to see where everything goes. 
+The VM can set up and autostart services checked out in [projects](projects), providing you create the (optional) 
+`services.yaml` file on the root of this project. You have a template you can peruse at 
+[services.yaml.dist](services.yaml.dist). 
 
-See below for file structure.
+Your `services.yaml` file will be ignored by git.
+
+### Services.yaml file structure
+```yaml
+definitions:
+  # Mandatory
+  - name: SERVICE_NAME
+
+    # Optional - we will automatically clone this if not present
+    git_repo: path-to-git-repo.git
+
+    # Mandatory - location in `projects/` of the codebase. If checking out the app automatically, it'll be done here
+    directory: my-service
+
+    # Mandatory - command to startup service, relative to its codebase directory
+    startup_command: make start -e CAROOT=~/local_certificates
+
+    # Whether to start service on vm boot
+    autostart: true
+
+    # Any ports you want to forward from within the VM to your host
+    port_mappings:
+      - guest: 10000
+        host: 12002
+```
+
+### How services are run
+Each service defined in `services.yaml`  is set up as a supervisor program service. You can have a look at the 
+[supervisor config template](ansible/roles/services/templates/supervisor_program.conf.j2) to see where everything goes.
 
 When you define the `startup_command` make sure the command does not terminate - this is similar to docker where
 you must make sure your program does not go into the background to continue execution. Supervisor (and docker) consider
@@ -80,13 +108,8 @@ definitions:
     - startup_command: docker-compose up -d
 ```
 
-
-### Services.yaml file structure
-TBD
-
 ### Logs
 Your services are started via supervisor. Logs are piped to `/home/vagrant/logs/supervisor-SERVICE_NAME.log` 
-
 
 ## FAQ
 ### Why not assign more than 1 CPU?
