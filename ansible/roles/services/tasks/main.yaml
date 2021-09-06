@@ -1,0 +1,50 @@
+---
+
+# The stat ansible built-in runs in the VM, so we need to check on the VM's paths
+- name: Checking whether the services file exists
+  stat:
+    path: /vagrant/services.yaml
+  register: services_file_result
+
+- name: Set up services, if any given
+  when: services_file_result.stat.exists
+  block:
+
+    # include_vars is however looked on the hosts's filesystem. This is why the path here is different than on the
+    # stat task above
+    - name: Load service definitions
+      include_vars:
+        file: ../services.yaml
+        name: services
+
+    # This will never overwrite your code or switch branches, as it won't run unless the directory for your
+    # service exists
+    - name: Checkout apps
+      shell: |
+        cd /home/vagrant/projects
+        if [[ "{{ item.git_repo }}" != "" && ! -d "{{ item.directory }}" ]]; then
+          git clone {{ item.git_repo }} {{ item.directory }}
+        fi
+      args:
+        executable: /bin/bash
+      with_items: "{{ services.definitions }}"
+
+    - name: Create supervisor log folder
+      file:
+        path: /home/vagrant/projects/logs
+        owner: vagrant
+        group: vagrant
+        state: directory
+
+    - name: Write supervisor config for services
+      become: true
+      template:
+        src: templates/supervisor_program.conf.j2
+        dest: /etc/supervisor/conf.d/{{ item.name }}.conf
+      with_items: "{{ services.definitions }}"
+
+    - name: Restart supervisor
+      become: true
+      systemd:
+        name: supervisor
+        state: restarted

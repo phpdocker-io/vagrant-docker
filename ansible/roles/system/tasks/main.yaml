@@ -1,0 +1,36 @@
+---
+
+- name: Upgrade system
+  become: true
+  apt:
+    update_cache: true
+    upgrade: dist
+
+# Workaround for https://bugs.launchpad.net/bugs/1873506
+# Must use vagrant box version 20210415.0.0 or earlier for this to work
+- name: Install virtualbox-guest-dkms
+  become: true
+  apt:
+    pkg:
+      - virtualbox-guest-dkms
+
+- name: Install docker
+  become: true
+  apt:
+    pkg:
+      - docker.io
+      - docker-compose
+
+- name: Allow default user access to docker
+  become: true
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
+
+- name: Install tooling
+  become: true
+  apt:
+    pkg:
+      - make
+      - supervisor
