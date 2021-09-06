@@ -17,47 +17,6 @@ This is still a work in progress.
  - Vagrant 2.2
  - Virtualbox
 
-## Permission issues in containers
-**Scenario:** PHP symfony app has issues writing to the `var/` folder its logs or caches or
-whatever.
-
-**Solution:** Ensure you tweak the runtime's user in the relevant `Dockerfile` to run as user/group IDs 1000 in order 
-to match the `vagrant` user on the VM which will own all files shared from the host. Examples:
-
-```dockerfile
-# In alpine images
-RUN apk add --no-cache shadow; \
-    usermod -u 1000 www-data; \
-    groupmod -g 1000 www-data; \
-    apk del shadow
-
-# In other OS bases (debian, ubuntu, etc) \
-RUN usermod -u 1000 www-data; \
-    groupmod -g 1000 www-data
-```
-
-You might want to do this only on your dev container, which you can achieve by using
-multi stages:
-
-```dockerfile
-FROM phpdockerio/php80-fpm AS base
-# ... do some stuff common to dev & prod images
-
-FROM base AS dev
-RUN usermod -u 1000 www-data; \
-    groupmod -g 1000 www-data
-```
-
-Then you can simply target that multistage on your docker-compose file:
-
-```yaml
-  php-fpm:
-    build:
-      dockerfile: Dockerfile
-      target: dev
-      context: .
-```
-
 ## Services
 
 The VM can set up and autostart services checked out in [projects](projects), providing you create the (optional) 
@@ -133,3 +92,44 @@ It is common for a docker service to take a while to start if a docker build is 
 re-creating the box from scratch as there will be no cached built containers. For instance, if your service uses
 the official php base image you'll probably be building a ton of dependencies from sources the first time you do
 docker-compose up on a pristine vm.
+
+### Permission issues in containers
+**Scenario:** PHP symfony app has issues writing to the `var/` folder its logs or caches or
+whatever.
+
+**Solution:** Ensure you tweak the runtime's user in the relevant `Dockerfile` to run as user/group IDs 1000 in order
+to match the `vagrant` user on the VM which will own all files shared from the host. Examples:
+
+```dockerfile
+# In alpine images
+RUN apk add --no-cache shadow; \
+    usermod -u 1000 www-data; \
+    groupmod -g 1000 www-data; \
+    apk del shadow
+
+# In other OS bases (debian, ubuntu, etc) \
+RUN usermod -u 1000 www-data; \
+    groupmod -g 1000 www-data
+```
+
+You might want to do this only on your dev container, which you can achieve by using
+multi stages:
+
+```dockerfile
+FROM phpdockerio/php80-fpm AS base
+# ... do some stuff common to dev & prod images
+
+FROM base AS dev
+RUN usermod -u 1000 www-data; \
+    groupmod -g 1000 www-data
+```
+
+Then you can simply target that multistage on your docker-compose file:
+
+```yaml
+  php-fpm:
+    build:
+      dockerfile: Dockerfile
+      target: dev
+      context: .
+```
