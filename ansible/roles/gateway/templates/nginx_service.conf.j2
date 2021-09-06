@@ -2,14 +2,6 @@
 # Note: the resolver and upstream set up per location is done (instead of simply proxy_pass http://servicename) to allow
 # the gateway to be online by itself (or with not all services up). Otherwise nginx exits.
 
-# Redirect ALL non HTTPS traffic to HTTPS
-server {
-  listen 80 default_server;
-  listen [::]:80 default_server;
-  server_name _;
-  return 301 https://$host$request_uri;
-}
-
 server {
   server_name  {{ item.hostname }}.local;
 

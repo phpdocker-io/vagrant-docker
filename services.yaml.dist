@@ -5,6 +5,7 @@ definitions:
     directory: phpdockerio
     startup_command: make start -e CAROOT=~/local_certificates
     autostart: true
+    exposed_service_port: 10000
     port_mappings:
       - guest: 10000
         host: 12002

@@ -1,7 +1,48 @@
 ---
 
-- name: Install nginx
-  become: true
-  apt:
-    pkg:
-      - nginx
+# This role installs nginx directly on the vm and sets up a number of reverse proxies to each service we serve
+# By running nginx directly on the VM instead of using docker we have access to any docker hosted services
+# without requiring each service to connect to a network we define
+
+- name: Set reverse proxies, if any given
+  when: services_file_result.stat.exists
+  block:
+    - name: Install nginx
+      become: true
+      apt:
+        pkg:
+          - nginx
+
+    - name: Remove default site
+      become: true
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Load service definitions
+      include_vars:
+        file: ../services.yaml
+        name: services
+
+    - name: Write nginx config ssl redirect
+      become: true
+      template:
+        src: templates/https_redirect.conf
+        dest: /etc/nginx/sites-enabled/https_redirect.conf
+
+    - name: Write nginx config for services
+      become: true
+      template:
+        src: templates/nginx_service.conf.j2
+        dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
+      with_items: "{{ services.definitions }}"
+
+    - name: Test nginx config
+      become: true
+      shell: nginx -t
+
+    - name: Restart nginx
+      become: true
+      systemd:
+        name: nginx
+        state: restarted

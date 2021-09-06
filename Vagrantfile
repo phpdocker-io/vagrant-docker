@@ -14,6 +14,10 @@ Vagrant.configure("2") do |config|
   # For instance, you might want to connect a xdebug session from your guest into your IDE
   config.vm.network "private_network", ip: "192.168.33.10"
 
+  # We have an HTTP gateway via nginx. Open ports to it
+  config.vm.network "forwarded_port", guest: 80, host: 80, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 443, host: 443, host_ip: "127.0.0.1"
+
   # Share the projects folder into vagrant's home for easy access
   config.vm.synced_folder "projects", "/home/vagrant/projects"
 
@@ -39,7 +43,7 @@ Vagrant.configure("2") do |config|
           config.vm.network "forwarded_port", guest: ports['guest'], host: ports['host'], host_ip: "127.0.0.1"
         end
 
-        config.trigger.after [:provision] do |trigger|
+        config.trigger.before [:provision] do |trigger|
           trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['hostname'] }
         end
       end

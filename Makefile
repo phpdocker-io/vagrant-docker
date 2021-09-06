@@ -20,7 +20,7 @@ bin/mkcert:
 	bin/mkcert -install
 
 create-certs:
-	bin/mkcert -cert-file=$(CERTS_LOCATION)/localhost.pem -key-file=$(CERTS_LOCATION)/localhost-key.pem $(SITE_HOST).local
+	bin/mkcert -cert-file=$(CERTS_LOCATION)/$(SITE_HOST).pem -key-file=$(CERTS_LOCATION)/$(SITE_HOST)-key.pem $(SITE_HOST).local
 
 bin/hosts:
 	@echo "Installing hosts script"
