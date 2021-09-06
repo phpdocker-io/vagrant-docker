@@ -2,8 +2,6 @@
 # vi: set ft=ruby :
 require 'yaml'
 
-services_file = 'services.yaml'
-
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
 
@@ -32,11 +30,14 @@ Vagrant.configure("2") do |config|
   end
 
   # Load services file in order to correctly set any port mappings between vm and host
-  services = YAML.load_file(services_file)
+  services_file = 'services.yaml'
+  if File.exists?(services_file)
+      services = YAML.load_file(services_file)
 
-  services['definitions'].each do |service|
-    service['port_mappings'].each do |ports|
-      config.vm.network "forwarded_port", guest: ports['guest'], host: ports['host'], host_ip: "127.0.0.1"
-    end
+      services['definitions'].each do |service|
+        service['port_mappings'].each do |ports|
+          config.vm.network "forwarded_port", guest: ports['guest'], host: ports['host'], host_ip: "127.0.0.1"
+        end
+      end
   end
 end
