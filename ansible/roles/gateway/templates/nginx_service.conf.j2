@@ -1,0 +1,26 @@
+# Set up gateway to different services
+# Note: the resolver and upstream set up per location is done (instead of simply proxy_pass http://servicename) to allow
+# the gateway to be online by itself (or with not all services up). Otherwise nginx exits.
+
+# Redirect ALL non HTTPS traffic to HTTPS
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name _;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  server_name  {{ item.hostname }}.local;
+
+  listen 443 ssl;
+  ssl_certificate     /vagrant/gateway/certs/{{ item.hostname }}.pem;
+  ssl_certificate_key /vagrant/gateway/certs/{{ item.hostname }}-key.pem;
+
+  location / {
+    resolver 127.0.0.11 valid=30s;
+    resolver_timeout 5s;
+    set $upstream 127.0.0.1;
+    proxy_pass  http://$upstream:{{ item.exposed_service_port }};
+  }
+}

@@ -4,6 +4,7 @@ MKCERT_LOCATION=bin/mkcert
 HOSTS_VERSION=3.6.4
 HOSTS_LOCATION=bin/hosts
 SITE_HOST?=vagrant-docker-test
+CERTS_LOCATION=gateway/certs
 
 # linux-amd64, darwin-amd64, linux-arm
 # On windows, override with windows-amd64.exe
@@ -19,7 +20,7 @@ bin/mkcert:
 	bin/mkcert -install
 
 create-certs:
-	bin/mkcert -cert-file=traefik/certs/localhost.pem -key-file=traefik/certs/localhost-key.pem $(SITE_HOST).local
+	bin/mkcert -cert-file=$(CERTS_LOCATION)/localhost.pem -key-file=$(CERTS_LOCATION)/localhost-key.pem $(SITE_HOST).local
 
 bin/hosts:
 	@echo "Installing hosts script"
