@@ -18,29 +18,43 @@ Vagrant.configure("2") do |config|
   # Share the projects folder into vagrant's home for easy access
   config.vm.synced_folder "projects", "/home/vagrant/projects"
 
-  # VM configuration
-  config.vm.provider "virtualbox" do |vb|
-    vb.gui = false
-    vb.cpus = 1
-    vb.memory = "4096"
-  end
-
   # Provision the machine with ansible. This requires you to have ansible installed on your host
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ansible/playbook.yaml"
   end
 
-  # Load services file in order to correctly set any port mappings between vm and host
-  services_file = 'services.yaml'
-  if File.exists?(services_file)
-      services = YAML.load_file(services_file)
+  vm_cpus = 1
+  vm_mem = 4096
 
-      services['definitions'].each do |service|
-        if service.key?('gateway')
-            config.trigger.before [:provision] do |trigger|
-              trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['gateway']['hostname'] }
+  config_file = 'config.yaml'
+  if File.exists?(config_file)
+      config_options = YAML.load_file(config_file)
+
+      if config_options.key?('services')
+          config_options['services'].each do |service|
+            if service.key?('gateway')
+                config.trigger.before [:provision] do |trigger|
+                  trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['gateway']['hostname'] }
+                end
             end
+          end
+      end
+
+      if config_options.key?('vm')
+        vm_options = config_options['vm']
+        if vm_options.key?('cpus')
+            vm_cpus = vm_options['cpus']
+        end
+        if vm_options.key?('mem')
+            vm_mem = vm_options['mem']
         end
       end
+  end
+
+  # VM configuration
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.cpus = vm_cpus
+    vb.memory = vm_mem
   end
 end

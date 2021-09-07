@@ -1,0 +1,24 @@
+vm:
+  cpus: 2
+  mem: 2000
+
+# Add here the paths on your host of private ssh keys you want copied into the vm
+# Useful if you want to use ssh git repos or the like from within the vm
+private_ssh_keys:
+  - ~/.ssh/id_rsa_4096
+
+# Services to set up on gateway and supervisor, if any
+services:
+  - name: phpdocker
+    git_repo: https://github.com/phpdocker-io/phpdocker.io.git
+    directory: phpdockerio
+    gateway:
+      hostname: phpdocker-vagrant
+      exposed_service_port: 10000
+      is_ssl: true
+    supervisor:
+      startup_command: make start -e CAROOT=~/local_certificates
+      autostart: true
+
+  - name: dummy
+    directory: awesome

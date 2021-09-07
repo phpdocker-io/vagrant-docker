@@ -3,9 +3,13 @@
 # This role installs nginx directly on the vm and sets up a number of reverse proxies to each service we serve
 # By running nginx directly on the VM instead of using docker we have access to any docker hosted services
 # without requiring each service to connect to a network we define
+- name: Checking whether the config file exists
+  stat:
+    path: /vagrant/config.yaml
+  register: config_file_result
 
 - name: Set reverse proxies, if any given
-  when: services_file_result.stat.exists
+  when: config_file_result.stat.exists
   block:
     - name: Install nginx
       become: true
@@ -21,8 +25,8 @@
 
     - name: Load service definitions
       include_vars:
-        file: ../services.yaml
-        name: services
+        file: ../config.yaml
+        name: config
 
     - name: Write nginx config ssl redirect
       become: true
@@ -39,7 +43,7 @@
         dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
         owner: www-data
         group: www-data
-      with_items: "{{ services.definitions }}"
+      with_items: "{{ config.services }}"
       when: item.gateway is defined and item.gateway | default("", true)
 
     - name: Create certs folder
