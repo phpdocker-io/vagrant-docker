@@ -37,6 +37,24 @@
         dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
       with_items: "{{ services.definitions }}"
 
+    - name: Create certs folder
+      become: true
+      file:
+        path: /home/vagrant/gateway-certs
+        owner: www-data
+        group: www-data
+        state: directory
+
+    # We must copy these certs into the VM directly as, during boot, nginx might come online before the
+    # /vagrant mount is ready
+    - name: Copy certs into folder
+      become: true
+      copy:
+        src: ../certs/
+        dest: /home/vagrant/gateway-certs
+        owner: www-data
+        group: www-data
+
     - name: Test nginx config
       become: true
       shell: nginx -t

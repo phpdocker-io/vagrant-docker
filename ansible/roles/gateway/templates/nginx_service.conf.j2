@@ -4,10 +4,12 @@
 
 server {
   server_name  {{ item.hostname }}.local;
+  server_name  {{ item.hostname }}.local;
 
   listen 443 ssl;
-  ssl_certificate     /vagrant/gateway/certs/{{ item.hostname }}.pem;
-  ssl_certificate_key /vagrant/gateway/certs/{{ item.hostname }}-key.pem;
+  listen [::]:443 ssl;
+  ssl_certificate     /home/vagrant/gateway-certs/{{ item.hostname }}.pem;
+  ssl_certificate_key /home/vagrant/gateway-certs/{{ item.hostname }}-key.pem;
 
   location / {
     resolver 127.0.0.11 valid=30s;

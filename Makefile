@@ -4,7 +4,7 @@ MKCERT_LOCATION=bin/mkcert
 HOSTS_VERSION=3.6.4
 HOSTS_LOCATION=bin/hosts
 SITE_HOST?=vagrant-docker-test
-CERTS_LOCATION=gateway/certs
+CERTS_LOCATION=ansible/roles/gateway/certs
 
 # linux-amd64, darwin-amd64, linux-arm
 # On windows, override with windows-amd64.exe
