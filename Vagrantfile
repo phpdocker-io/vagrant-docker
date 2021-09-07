@@ -36,8 +36,10 @@ Vagrant.configure("2") do |config|
       services = YAML.load_file(services_file)
 
       services['definitions'].each do |service|
-        config.trigger.before [:provision] do |trigger|
-          trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['gateway']['hostname'] }
+        if service.key?('gateway')
+            config.trigger.before [:provision] do |trigger|
+              trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['gateway']['hostname'] }
+            end
         end
       end
   end

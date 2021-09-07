@@ -9,3 +9,7 @@ definitions:
     supervisor:
       startup_command: make start -e CAROOT=~/local_certificates
       autostart: true
+
+  - name: dummy
+    directory: awesome
+    git_repo:

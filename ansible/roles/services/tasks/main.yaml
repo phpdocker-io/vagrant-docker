@@ -22,12 +22,15 @@
     - name: Checkout apps
       shell: |
         cd /home/vagrant/projects
-        if [[ "{{ item.git_repo }}" != "" && ! -d "{{ item.directory }}" ]]; then
+        if [[ ! -d "{{ item.directory }}" ]]; then
           git clone {{ item.git_repo }} {{ item.directory }}
+        else
+          echo "Directory '{{ item.directory }}' already exists, skipping..."
         fi
       args:
         executable: /bin/bash
       with_items: "{{ services.definitions }}"
+      when: item.git_repo is defined and item.git_repo | default("", true)
 
     - name: Create supervisor log folder
       file:
@@ -42,6 +45,7 @@
         src: templates/supervisor_program.conf.j2
         dest: /etc/supervisor/conf.d/{{ item.name }}.conf
       with_items: "{{ services.definitions }}"
+      when: item.supervisor is defined and item.supervisor | default("", true)
 
     - name: Restart supervisor
       become: true

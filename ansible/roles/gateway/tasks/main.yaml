@@ -40,6 +40,7 @@
         owner: www-data
         group: www-data
       with_items: "{{ services.definitions }}"
+      when: item.gateway is defined and item.gateway | default("", true)
 
     - name: Create certs folder
       become: true
