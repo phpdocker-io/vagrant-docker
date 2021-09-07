@@ -44,7 +44,7 @@
       template:
         src: templates/supervisor_program.conf.j2
         dest: /etc/supervisor/conf.d/{{ item.name }}.conf
-      with_items: "{{ services.definitions }}"
+      with_items: "{{ config.services }}"
       when: item.supervisor is defined and item.supervisor | default("", true)
 
     - name: Restart supervisor
