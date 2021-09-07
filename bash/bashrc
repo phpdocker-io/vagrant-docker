@@ -88,10 +88,6 @@ export PATH
 alias ls='ls --color'
 alias l='ls -la --block-size=KB'
 
-alias whereami='env|grep -i realname'
-
-alias clearztm='curl -i -H "Cache-Control: no-cache"'
-
 alias upgrade='sudo apt update; sudo apt dist-upgrade -y; sudo apt autoremove -y; sudo apt clean'
 
 alias ls="ls --color"
@@ -112,12 +108,8 @@ alias ga="git add"
 alias gc="git commit"
 alias gco="git checkout"
 alias gs="git rebase -i"
-alias gfu="git fetch upstream"
 alias gr="git rebase"
-alias gru="git rebase upstream/dev"
 alias gp="git push"
 alias gpo="git push origin"
-alias gpu="git push upstream"
-alias composer="composer.phar"
 
 export LS_COLORS="no=00:fi=00:di=01;90:ln=01;36:pi=40;33:so=01;90:do=01;90:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=01;35:ow=01;35:*.tar=01;31:*.tgz=01;31:*.taz=01;31:*.zip=01;31:*.gz=01;31:*.bz2=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.php=01;93:*.sql=01;31:*.tif=01;35:*.tiff=01;35:*.png=01;35"
