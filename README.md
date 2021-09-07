@@ -39,6 +39,7 @@ The file is composed of a list of objects named `definitions`. Each object has t
    * `hostname` _(mandatory)_: if provided, we'll create an entry on the gateway to your service, and a hosts entry on
      your host computer matching that gateway. We'll be adding `.local` automatically to your choice here.
    * `exposed_service_port` _(mandatory): which port does your app listen on? we'll connect the gateway to it
+   * `is_ssl` _(optional): whether your service uses SSL
 * `supervisor` _(optional)_: if provided, we'll set the app up on supervisor to have it available as a service. This is
   an object with the following properties:
    * `startup_command` _(mandatory)_: when setting up your service on the machine's supervisor, we'll use this command
@@ -50,13 +51,14 @@ The file is composed of a list of objects named `definitions`. Each object has t
 ```yaml
 definitions:
     # Docker-compose based, exposes an HTTP endpoint on port 3000. We want it exposed via the gateway. There's a
-    # git repo in github for it. We want it to start on VM's boot
+    # git repo in github for it. We want it to start on VM's boot. Service at port 3000 uses a self-signed cert
     - name: awesome-service
       git_repo: https://github.com/yay/phpdocker.io.git
       directory: awesome
       gateway:
          hostname: awesome
          exposed_service_port: 3000
+         is_ssl: true
       supervisor:
          startup_command: docker-compose up
          autostart: true
@@ -99,12 +101,18 @@ The VM is accessible on a virtual private network at the IP address above. Any p
 from your host without port forwarding. Entries that are set up on your hosts file automatically all point to this IP
 address as well.
 
+For instance, if one of your services is running mysql and it exposes its 3306 port as 12000, you'll be able to connect
+to it from your host at `192.168.33.10:12000`.
+
 #### The gateway
 
 As part of this set up, the VM creates a reverse proxy gateway (using nginx) for each service that requests it on the
 `services.yaml` file, as well as hosts entries on your host computer to match and SSL certificates (more on those
 certificates below). The gateway exposes ports 80 and 443 for each of those services, although all reguests to port 80
 will get redirected to the https address.
+
+If your service exposes an SSL endpoint, you must indicate `is_ssl: true` on the gateway config. It will not verify
+SSL certs to allow for self-signed certificates there.
 
 #### Certificates
 

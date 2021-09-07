@@ -26,15 +26,19 @@
 
     - name: Write nginx config ssl redirect
       become: true
-      template:
+      copy:
         src: templates/https_redirect.conf
         dest: /etc/nginx/sites-enabled/https_redirect.conf
+        owner: www-data
+        group: www-data
 
     - name: Write nginx config for services
       become: true
       template:
         src: templates/nginx_service.conf.j2
         dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
+        owner: www-data
+        group: www-data
       with_items: "{{ services.definitions }}"
 
     - name: Create certs folder

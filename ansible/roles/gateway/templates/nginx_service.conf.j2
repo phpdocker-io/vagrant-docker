@@ -14,6 +14,14 @@ server {
     resolver 127.0.0.11 valid=30s;
     resolver_timeout 5s;
     set $upstream 127.0.0.1;
-    proxy_pass  http://$upstream:{{ item.gateway.exposed_service_port }};
+    proxy_set_header Host $host;
+
+{% if item.gateway.is_ssl %}
+    proxy_ssl_verify off;
+    proxy_pass https://$upstream:{{ item.gateway.exposed_service_port }};
+    proxy_ssl_session_reuse off;
+{% else %}
+    proxy_pass http://$upstream:{{ item.gateway.exposed_service_port }};
+{% endif %}
   }
 }

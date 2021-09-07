@@ -5,6 +5,7 @@ definitions:
     gateway:
       hostname: phpdocker-vagrant
       exposed_service_port: 10000
+      is_ssl: true
     supervisor:
       startup_command: make start -e CAROOT=~/local_certificates
       autostart: true
