@@ -80,14 +80,15 @@ must make sure your program does not go into the background to continue executio
 process to have died when it exits.
 
 Examples for a docker-compose service
+
 ```yaml
-definitions
-  - supervisor:
-      # Good - process won't exit and docker-compose prints logs to stdout, which supervisor collects
-      startup_command: docker-compose up
-  - supervisor:
-       # Bad - process goes into background. This really upsets supervisor as it things your process terminated
-      startup_command: docker-compose up -d
+definitions:
+   - supervisor:
+        # Good - process won't exit and docker-compose prints logs to stdout, which supervisor collects
+        startup_command: docker-compose up
+   - supervisor:
+        # Bad - process goes into background. This really upsets supervisor as it things your process terminated
+        startup_command: docker-compose up -d
 ```
 
 ### Connectivity
