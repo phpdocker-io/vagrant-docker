@@ -34,17 +34,3 @@
     pkg:
       - make
       - supervisor
-
-- name: Install tricked out bashrc
-  file:
-    src: /vagrant/bash/bashrc
-    dest: /home/vagrant/.bashrc
-    state: link
-    force: true
-
-- name: Install link to bash_history
-  file:
-    src: /vagrant/bash/bash_history
-    dest: /home/vagrant/.bash_history
-    state: link
-    force: true
