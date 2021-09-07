@@ -12,9 +12,18 @@ attest to the veracity of that statement.
 This is still a work in progress.
 
 ## Requirements
- - Ansible 2
- - Vagrant 2.2
- - Virtualbox
+ - Ansible >= 2
+ - Vagrant >= 2.2
+ - Virtualbox >= 6
+ 
+## How to use
+
+This is a vagrant box. You simply use your normal vagrant commands, such as `vagrant up` to bring the machine up,
+`vagrant provision` if you've made any changes to your services (see below), `vagrant halt` to shut down the machine,
+`vagrant ssh` to open a session into the box, etc.
+
+The Makefile is for Vagrant's use only - it contains some targets to set up hosts and certs on your host. You're not
+really meant to use them directly.
 
 ## Services
 
