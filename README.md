@@ -42,8 +42,6 @@ Three main sections:
     * `cpus` _(optional)_: number of cores given to the VM. Bear in mind Virtualbox slows down on many workloads with
       more than 1.
     * `mem` _(optional)_: memory to allocate the VM in kilobytes.
-* `private_ssh_keys` _(optional)_: list of paths to private ssh keys on your host computer that will be copied into the
-  vm. This is to allow you to use git against ssh repos and things like that, from within the VM.
 * `services` _(optional): list of service definitions to set up as hosts and on supervisor on the VM. See below for
   object structure:
     * `name` _(mandatory)_: the name of your service. Try not to use spaces and weird chars as this is used on log

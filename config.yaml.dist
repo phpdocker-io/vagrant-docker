@@ -2,11 +2,6 @@ vm:
   cpus: 2
   mem: 2000
 
-# Add here the paths on your host of private ssh keys you want copied into the vm
-# Useful if you want to use ssh git repos or the like from within the vm
-private_ssh_keys:
-  - ~/.ssh/id_rsa_4096
-
 # Services to set up on gateway and supervisor, if any
 services:
   - name: phpdocker
