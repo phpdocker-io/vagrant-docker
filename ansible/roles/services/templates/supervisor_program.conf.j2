@@ -1,7 +1,7 @@
 [program:{{ item.name }}]
 directory=/home/vagrant/projects/{{ item.directory }}
-command={{ item.startup_command }}
-autostart={{ item.autostart | lower }}
+command={{ item.supervisor.startup_command }}
+autostart={{ item.supervisor.autostart | lower }}
 user=vagrant
 redirect_stderr=true
 stdout_logfile=/home/vagrant/projects/logs/supervisor-{{ item.name }}.log

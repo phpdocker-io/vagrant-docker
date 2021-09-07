@@ -1,11 +1,10 @@
 definitions:
   - name: phpdocker
-    hostname: phpdocker-vagrant
     git_repo: https://github.com/phpdocker-io/phpdocker.io.git
     directory: phpdockerio
-    startup_command: make start -e CAROOT=~/local_certificates
-    autostart: true
-    exposed_service_port: 10000
-    port_mappings:
-      - guest: 10000
-        host: 12002
+    gateway:
+      hostname: phpdocker-vagrant
+      exposed_service_port: 10000
+    supervisor:
+      startup_command: make start -e CAROOT=~/local_certificates
+      autostart: true

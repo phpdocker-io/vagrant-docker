@@ -3,17 +3,17 @@
 # the gateway to be online by itself (or with not all services up). Otherwise nginx exits.
 
 server {
-  server_name  {{ item.hostname }}.local;
+  server_name  {{ item.gateway.hostname }}.local;
 
   listen 443 ssl;
   listen [::]:443 ssl;
-  ssl_certificate     /home/vagrant/gateway-certs/{{ item.hostname }}.pem;
-  ssl_certificate_key /home/vagrant/gateway-certs/{{ item.hostname }}-key.pem;
+  ssl_certificate     /home/vagrant/gateway-certs/{{ item.gateway.hostname }}.pem;
+  ssl_certificate_key /home/vagrant/gateway-certs/{{ item.gateway.hostname }}-key.pem;
 
   location / {
     resolver 127.0.0.11 valid=30s;
     resolver_timeout 5s;
     set $upstream 127.0.0.1;
-    proxy_pass  http://$upstream:{{ item.exposed_service_port }};
+    proxy_pass  http://$upstream:{{ item.gateway.exposed_service_port }};
   }
 }
