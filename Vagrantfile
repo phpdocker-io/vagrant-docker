@@ -9,14 +9,11 @@ Vagrant.configure("2") do |config|
   config.vm.box_version = "20210415.0.0"
   config.vm.box_check_update = false
 
-  # Create a private network on your host that's accessible from the guest - this is useful if you need connections
-  # back to your host from your guest
-  # For instance, you might want to connect a xdebug session from your guest into your IDE
+  # Create a private network on your host that's accessible from the guest. Reasons:
+  #  * You don't need port forwarding, if a port is active on your VM it'll be accessible on this IP from your host
+  #  * You can connect back from your guest VM into your host, for instance if you need Xdebug on the guest sending
+  #    data to into your IDE for a debug session
   config.vm.network "private_network", ip: "192.168.33.10"
-
-  # We have an HTTP gateway via nginx. Open ports to it
-  config.vm.network "forwarded_port", guest: 80,  host: 8080, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 443, host: 8443, host_ip: "127.0.0.1"
 
   # Share the projects folder into vagrant's home for easy access
   config.vm.synced_folder "projects", "/home/vagrant/projects"
@@ -39,12 +36,8 @@ Vagrant.configure("2") do |config|
       services = YAML.load_file(services_file)
 
       services['definitions'].each do |service|
-        service['port_mappings'].each do |ports|
-          config.vm.network "forwarded_port", guest: ports['guest'], host: ports['host'], host_ip: "127.0.0.1"
-        end
-
         config.trigger.before [:provision] do |trigger|
-          trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['hostname'] }
+          trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['gateway']['hostname'] }
         end
       end
   end

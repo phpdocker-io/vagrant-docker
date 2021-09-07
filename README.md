@@ -26,27 +26,52 @@ The VM can set up and autostart services checked out in [projects](projects), pr
 Your `services.yaml` file will be ignored by git.
 
 ### Services.yaml file structure
+
+The file is composed of a list of objects named `definitions`. Each object has the following properties:
+
+ * `name` _(mandatory)_: the name of your service. Try not to use spaces and weird chars as this is used on log filenames 
+   and other things.
+ * 
+ * `git_repo` _(optional)_: if provided, we'll git-clone this repo in the [projects](projects) folder at the location of
+   `directory` below (if not exists).
+ * `directory` _(mandatory)_: where this particular service's sources are in [projects](projects). Try not to use 
+   spaces or weird chars here.
+ * `gateway` _(optional)_: if provided, we'll create an entry for this service on the gateway. This is an object with 
+   the following properties:
+   * `hostname` _(mandatory)_: if provided, we'll create an entry on the gateway to your service, and a hosts entry
+        on your host computer matching that gateway. We'll be adding `.local` automatically to your choice here.
+   * `exposed_service_port` _(mandatory): which port does your app listen on? we'll connect the gateway to it
+ * `supervisor` _(optional)_: if provided, we'll set the app up on supervisor to have it available as a service. This
+   is an object with the following properties: 
+   * `startup_command` _(mandatory)_: when setting up your service on the machine's supervisor, we'll use this command to 
+     start the service. See note in `How services are run` below for more info.
+   * `autostart` _(mandatory): `true/false` whether this service must be started on boot.
+
+**Examples:**
+
+
+
 ```yaml
 definitions:
-  # Mandatory
-  - name: SERVICE_NAME
+    # Docker-compose based, exposes an HTTP endpoint on port 3000. We want it exposed via the gateway. There's a
+    # git repo in github for it. We want it to start on VM's boot
+    - name: awesome-service
+      git_repo: https://github.com/yay/phpdocker.io.git
+      directory: awesome
+      gateway:
+         hostname: awesome
+         exposed_service_port: 3000
+      supervisor:
+         startup_command: docker-compose up
+         autostart: true
 
-    # Optional - we will automatically clone this if not present
-    git_repo: path-to-git-repo.git
-
-    # Mandatory - location in `projects/` of the codebase. If checking out the app automatically, it'll be done here
-    directory: my-service
-
-    # Mandatory - command to startup service, relative to its codebase directory
-    startup_command: make start -e CAROOT=~/local_certificates
-
-    # Whether to start service on vm boot
-    autostart: true
-
-    # Any ports you want to forward from within the VM to your host
-    port_mappings:
-      - guest: 10000
-        host: 12002
+    # Another docker-compose service, but it works via a Makefile. Doesn't expose any ports. We want it active on
+    # boot. There's no git repo for it
+    - name: yolo
+      directory: awesome
+      supervisor:
+         startup_command: make start -e SOME_CONFIG_PARAM=yes
+         autostart: true
 ```
 
 ### How services are run

@@ -30,4 +30,4 @@ clean-hosts:
 	sudo bin/hosts remove --force *$(SITE_HOST).local > /dev/null 2>&1 || exit 0
 
 init-hosts: clean-hosts
-	sudo bin/hosts add 127.0.0.1 $(SITE_HOST).local
+	sudo bin/hosts add 192.168.33.10 $(SITE_HOST).local
