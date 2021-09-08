@@ -9,9 +9,17 @@ will work - in fact my main desktop OS is Linux.
 If you're a Windows user, same applies. Docker in WSL2 is said to work reasonably well. I don't use Windows so I can't
 attest to the veracity of that statement.
 
-This is still a work in progress.
+## tl;dr
+
+This vagrant box will:
+
+* Run your docker & docker-compose workloads
+* Create `.local` hosts on your host computer to services you configure
+* Make those services available to load locally
 
 ## Requirements
+
+You need the following installed on your host computer:
 
 - Ansible >= 2
 - Vagrant >= 2.2
@@ -34,15 +42,16 @@ The VM can set up and autostart services checked out in [projects](projects), pr
 
 Your `config.yaml` file will be ignored by git.
 
-### config.yaml file structure
+Any changes you make to this file will require you to re-provision your vagrant box - `vagrant provision` should be
+enough most of the time, or `vagrant reload --provision` if you'd also like to reboot the box.
 
-Three main sections:
+### config.yaml file structure
 
 * `vm` _(optional)_: options for the VM itself
     * `cpus` _(optional)_: number of cores given to the VM. Bear in mind Virtualbox slows down on many workloads with
       more than 1.
     * `mem` _(optional)_: memory to allocate the VM in kilobytes.
-* `services` _(optional): list of service definitions to set up as hosts and on supervisor on the VM. See below for
+* `services` _(optional)_: list of service definitions to set up as hosts and on supervisor on the VM. See below for
   object structure:
     * `name` _(mandatory)_: the name of your service. Try not to use spaces and weird chars as this is used on log
       filenames and other things.
@@ -56,12 +65,13 @@ Three main sections:
         * `hostname` _(mandatory)_: if provided, we'll create an entry on the gateway to your service, and a hosts entry
           on your host computer matching that gateway. We'll be adding `.local` automatically to your choice here.
         * `exposed_service_port` _(mandatory): which port does your app listen on? we'll connect the gateway to it
-        * `is_ssl` _(optional): whether your service uses SSL
+        * `is_ssl` _(optional)_: whether your service uses SSL. We need this to configure nginx to use SSL when reverse
+          proxying this service.
     * `supervisor` _(optional)_: if provided, we'll set the app up on supervisor to have it available as a service. This
       is an object with the following properties:
         * `startup_command` _(mandatory)_: when setting up your service on the machine's supervisor, we'll use this
           command to start the service. See note in `How services are run` below for more info.
-        * `autostart` _(mandatory): `true/false` whether this service must be started on boot.
+        * `autostart` _(mandatory)_: `true/false` whether this service must be started on boot.
 
 **Examples:**
 
@@ -70,7 +80,7 @@ services:
   # Docker-compose based, exposes an HTTP endpoint on port 3000. We want it exposed via the gateway. There's a
   # git repo in github for it. We want it to start on VM's boot. Service at port 3000 uses a self-signed cert
   - name: awesome-service
-    git_repo: https://github.com/yay/phpdocker.io.git
+    git_repo: https://github.com/yay/awesome.git
     directory: awesome
     gateway:
       hostname: awesome
@@ -133,8 +143,8 @@ certs to allow for self-signed certificates there.
 
 #### Certificates
 
-To create certificates, we're using [mkcert](https://github.com/FiloSottile/mkcert). This tool does a lot of black magic
-to not just generate those certificates, but it also installs a CA on your host computer so that the certificates aren't
+To create certificates, we're using [mkcert](https://github.com/FiloSottile/mkcert). This tool does black magic to not
+just generate those certificates, but it also installs a CA on your host computer so that the certificates aren't
 classed as self signed on your computer's clients (like your browser, or curl), with all the troubles that implies. Have
 a look at [mkcert](https://github.com/FiloSottile/mkcert) if you need more info on how it works.
 
@@ -154,6 +164,9 @@ You need to run `vagrant provision`.
 
 Virtualbox actually runs slower when you assign more than 1 CPU core to the box due to overheads on how it implements
 multi threading. This is a very old issue and who knows if it'll ever get fixed.
+
+However, some workloads might benefit from this. Ultimately you might want to experiment. The `config.yaml` file will
+allow you to tweak the number of CPUs given to the VM, as well as the amount of RAM.
 
 ### Why Virtualbox only?
 
