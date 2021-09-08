@@ -16,7 +16,7 @@ server {
     set $upstream 127.0.0.1;
     proxy_set_header Host $host;
 
-{% if item.gateway.is_ssl %}
+{% if item.gateway.is_ssl is defined and item.gateway.is_ssl %}
     proxy_ssl_verify off;
     proxy_pass https://$upstream:{{ item.gateway.exposed_service_port }};
     proxy_ssl_session_reuse off;
