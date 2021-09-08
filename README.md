@@ -1,4 +1,4 @@
-# Vagrant docker box [wip]
+# Vagrant docker box
 
 Since docker desktop is becoming a paid-for product for business users on Mac and PC, this vm is being designed as an
 easy way to load a bunch of services within a Vagrant box and expose them externally.
