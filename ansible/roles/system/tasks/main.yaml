@@ -34,3 +34,11 @@
     pkg:
       - make
       - supervisor
+
+- name: Remove unneeded packages & services
+  become: true
+  apt:
+    purge: true
+    state: absent
+    pkg:
+      - snapd
