@@ -26,6 +26,10 @@ Vagrant.configure("2") do |config|
   vm_cpus = 1
   vm_mem = 4096
 
+  config.trigger.before :provision, type: :action do |t|
+    t.warn = "This runs on vagrant provision, but not on initial vagrant up or vagrant reload --provision."
+  end
+
   config_file = 'config.yaml'
   if File.exists?(config_file)
       config_options = YAML.load_file(config_file)
@@ -33,7 +37,7 @@ Vagrant.configure("2") do |config|
       if config_options.key?('services')
           config_options['services'].each do |service|
             if service.key?('gateway')
-                config.trigger.before [:provision] do |trigger|
+                config.trigger.before :"Vagrant::Action::Builtin::Provision", type: :action do |trigger|
                   trigger.run = { inline: "make init-service-hostnames -e SITE_HOST=" + service['gateway']['hostname'] }
                 end
             end
