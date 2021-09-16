@@ -34,6 +34,13 @@ This is a vagrant box. You simply use your normal vagrant commands, such as `vag
 The Makefile is for Vagrant's use only - it contains some targets to set up hosts and certs on your host. You're not
 really meant to use them directly.
 
+### Note: first provisioning
+
+The first time you start the box, or after a destroy, start it with `vagrant up --provision`. Or simply
+run `vagrant provision` after initial startup.
+
+It's a workaround for https://github.com/hashicorp/vagrant/issues/12514
+
 ## Config
 
 The VM can set up and autostart services checked out in [projects](projects), providing you create the (optional)
