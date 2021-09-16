@@ -5,10 +5,6 @@ require 'yaml'
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
 
-  # Workaround for https://bugs.launchpad.net/bugs/1873506
-  config.vm.box_version = "20210415.0.0"
-  config.vm.box_check_update = false
-
   # Create a private network on your host that's accessible from the guest. Reasons:
   #  * You don't need port forwarding, if a port is active on your VM it'll be accessible on this IP from your host
   #  * You can connect back from your guest VM into your host, for instance if you need Xdebug on the guest sending
